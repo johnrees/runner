@@ -742,6 +742,13 @@ function animate() {
     }
 
     ticker++;
+
+    // for (var p = 0; p < 500; p += 33) {
+    //   ctx.moveTo(p, 0);
+    //   ctx.lineTo(p, 500);
+    // }
+    // ctx.stroke();
+    
   }
 }
 
@@ -843,12 +850,15 @@ function startGame() {
  * End the game and restart
  */
 function gameOver() {
-  stop = true;
-  $('#score').html(score);
-  $('#game-over').show();
-  assetLoader.sounds.bg.pause();
-  assetLoader.sounds.gameOver.currentTime = 0;
-  assetLoader.sounds.gameOver.play();
+  setTimeout(function() {
+    stop = true;
+    $('#score').html(score);
+    $('#game-over').show();
+    assetLoader.sounds.bg.pause();
+    assetLoader.sounds.gameOver.currentTime = 0;
+    assetLoader.sounds.gameOver.play();
+  }, 50);
+  
 }
 
 /**

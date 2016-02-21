@@ -4,9 +4,29 @@
   <meta charset="UTF-8">
   <title>Music Runner</title>
   <link rel="stylesheet" href="game.css" type="text/css" media="screen">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
+  <script type="text/javascript">
+    window.peaks = [];
+  </script>
 </head>
 <body>
+  <form>
+    <input type="text" id="query" placeholder="Type the name of a track (e.g. Beyonce - Baby Boy)">
+    <input type="submit" value="Search track &amp; Calculate tempo">
+  </form>
+
+  <div id="result">
+    <div id="text"></div>
+    <div>
+      <svg width="100%" height="40" id="svg"></svg>
+      <button id="play">Play track</button>
+    </div>
+
+    <audio id="audio"></audio>
+  </div>
+
   <div class="wrapper">
     <div class="sound sound-off"></div>
     <div id="menu">
@@ -47,6 +67,10 @@
       <a href="javascript:void(0)" class="button restart">Try again?</a>
     </div>
   </div>
+  
   <script type="text/javascript" src="game.js"></script>
+  <script type="text/javascript" src="spotify-web-api.js"></script>
+  <script type="text/javascript" src="echonest-api.js"></script>
+  <script type="text/javascript" src="script.js"></script>
 </body>
 </html>

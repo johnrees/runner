@@ -40,7 +40,7 @@ a {
 .wrapper {
   width: 600px;
   height: 360px;
-  position: absolute;
+  position: relative;
   top: 5px;
   left: 5px;
 }

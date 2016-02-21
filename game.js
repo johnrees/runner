@@ -272,26 +272,26 @@ var background = (function() {
 
     // Pan background
     sky.x -= sky.speed;
-    // backdrop.x -= backdrop.speed;
-    // backdrop2.x -= backdrop2.speed;
+    backdrop.x -= backdrop.speed;
+    backdrop2.x -= backdrop2.speed;
 
     // draw images side by side to loop
     ctx.drawImage(assetLoader.imgs.sky, sky.x, sky.y);
     ctx.drawImage(assetLoader.imgs.sky, sky.x + canvas.width, sky.y);
 
-    // ctx.drawImage(assetLoader.imgs.backdrop, backdrop.x, backdrop.y);
-    // ctx.drawImage(assetLoader.imgs.backdrop, backdrop.x + canvas.width, backdrop.y);
+    ctx.drawImage(assetLoader.imgs.backdrop, backdrop.x, backdrop.y);
+    ctx.drawImage(assetLoader.imgs.backdrop, backdrop.x + canvas.width, backdrop.y);
 
-    // ctx.drawImage(assetLoader.imgs.backdrop2, backdrop2.x, backdrop2.y);
-    // ctx.drawImage(assetLoader.imgs.backdrop2, backdrop2.x + canvas.width, backdrop2.y);
+    ctx.drawImage(assetLoader.imgs.backdrop2, backdrop2.x, backdrop2.y);
+    ctx.drawImage(assetLoader.imgs.backdrop2, backdrop2.x + canvas.width, backdrop2.y);
 
     // If the image scrolled off the screen, reset
     if (sky.x + assetLoader.imgs.sky.width <= 0)
       sky.x = 0;
-    // if (backdrop.x + assetLoader.imgs.backdrop.width <= 0)
-    //   backdrop.x = 0;
-    // if (backdrop2.x + assetLoader.imgs.backdrop2.width <= 0)
-    //   backdrop2.x = 0;
+    if (backdrop.x + assetLoader.imgs.backdrop.width <= 0)
+      backdrop.x = 0;
+    if (backdrop2.x + assetLoader.imgs.backdrop2.width <= 0)
+      backdrop2.x = 0;
   };
 
   /**
@@ -704,7 +704,7 @@ function animate() {
     requestAnimFrame( animate );
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    background.draw();
+    // background.draw();
 
     // update entities
     updateWater();
@@ -767,14 +767,14 @@ for (var code in KEY_CODES) {
 document.onkeydown = function(e) {
   var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
   if (KEY_CODES[keyCode]) {
-    e.preventDefault();
+    // e.preventDefault();
     KEY_STATUS[KEY_CODES[keyCode]] = true;
   }
 };
 document.onkeyup = function(e) {
   var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
   if (KEY_CODES[keyCode]) {
-    e.preventDefault();
+    // e.preventDefault();
     KEY_STATUS[KEY_CODES[keyCode]] = false;
   }
 };

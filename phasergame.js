@@ -1,8 +1,9 @@
-var game = new Phaser.Game(1000, 300, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1000, 300, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
 var cursors;
 var stars;
 var ground;
-var scaleX = 10;
+var scaleX = 8;
+var stargroup = [];
 
 function preload() {
   game.load.image('ground', 'assets/platform.png');
@@ -11,6 +12,12 @@ function preload() {
 }
 
 function create() {
+  game.time.advancedTiming = true;
+  fpsText = game.add.text(
+    20, 20, '', { font: '16px Arial', fill: '#ffffff' }
+  );
+  fpsText.fixedToCamera = true;
+
   game.physics.startSystem(Phaser.Physics.ARCADE);
   game.world.setBounds(0, 0, 1000 * scaleX, game.height);
 
@@ -45,7 +52,7 @@ function create() {
 
   //  Player physics properties. Give the little guy a slight bounce.
   player.body.bounce.y = 0.2;
-  player.body.gravity.y = 3000;
+  player.body.gravity.y = 3800;
   player.body.collideWorldBounds = true;
 
   //  Our two animations, walking left and right.
@@ -58,35 +65,65 @@ function create() {
   stars.enableBody = true;
 
   game.camera.follow(player);
+  game.world.bringToTop(ground);
 
 }
 
-function addStars() {
-  for (var i = 0; i < window.peaks.length; i++)
-  {
-      //  Create a star inside of the 'stars' group
-      var star = stars.create(window.peaks[i] * scaleX, 200, 'star');
-      //  Let gravity do its thing
-      star.body.gravity.y = 3000;
-      //  This just gives each star a slightly random bounce value
-      // star.body.bounce.y = 0.7 + Math.random() * 0.2;
+function addStars(windowpeaks) {
+  for (var i = 0; i < stars.children.length; i++) {
+    stars.children[i].destroy();
   }
-  stars.setAll('outOfBoundsKill', true);
-  stars.setAll('checkWorldBounds', true);
+  for (var i = 0; i < windowpeaks.length; i++)
+  {
+    //  Create a star inside of the 'stars' group
+    var star = stars.create(windowpeaks[i] * scaleX + 16, game.height-(Math.random() > 0.5 ? 40 : 80), 'star');
+    star.body.setSize(18, 18, 3, 3);
+    //  Let gravity do its thing
+    // star.body.gravity.y = 3000;
+    //  This just gives each star a slightly random bounce value
+    // star.body.bounce.y = 0.7 + Math.random() * 0.2;
+  }
 }
 
 function collectStar (player, star) {
-  // Removes the star from the screen
-  star.destroy();
+  // document.querySelector('#audio').pause();
+  player.body.velocity.y -= 1000;
+  star.kill();
+  // setTimeout(function() { 
+    // document.querySelector('#audio').play();
+  // }, 1000)
+}
+
+function render() {
+  // game.debug.bodyInfo(player, 0, 100);
+  // game.debug.body(player);
+  // for (var i = 0; i < stars.children.length; i++) {
+  //   game.debug.body(stars.children[i]);
+  // }
 }
 
 function update() {
+  if (game.time.fps !== 0) {
+    fpsText.setText(game.time.fps + ' FPS');
+  }
   game.physics.arcade.collide(player, ground);
   game.physics.arcade.collide(stars, ground);
   game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
   player.animations.play('right');
   player.body.x = window.playerX * scaleX;
+
+  for (var i = 0; i < stars.children.length; i++) {
+    if (stars.children[i].body.x < game.camera.x) {
+      stars.children[i].destroy();
+      console.log("REMOVE")
+    }
+    // else {
+    //   break;
+    // }
+  }
+
+  // game.world.wrap(player, 0, true);
 
   // if (cursors.left.isDown)
   // {
@@ -109,8 +146,16 @@ function update() {
   // }
 
   //  Allow the player to jump if they are touching the ground.
-  if (cursors.up.isDown && player.body.touching.down)
+  
+
+  //  Allow the player to jump if they are touching the ground.
+  if (cursors.down.isDown && player.body.touching.down)
+  {
+      player.body.setSize(20, 24, 3, 24);
+  } else if (cursors.up.isDown && player.body.touching.down)
   {
       player.body.velocity.y = -600;
+  } else {
+      player.body.setSize(10, 48, 8, 0);
   }
 }

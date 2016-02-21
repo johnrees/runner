@@ -76,8 +76,7 @@ var songs = [
 var queryInput = document.querySelector('#query'),
     result = document.querySelector('#result'),
     text = document.querySelector('#text'),
-    audioTag = document.querySelector('#audio'),
-    playButton = document.querySelector('#play');
+    audioTag = document.querySelector('#audio');
 
 var requestAnimFrame = (function(){
   return  window.requestAnimationFrame       ||
@@ -106,17 +105,17 @@ function updateProgressBar() {
 
 setInterval(updateProgressBar, 10);//1000/60);
 
-playButton.addEventListener('click', function() {
-  // audioTag.volume = 0;
-  audioTag.play();
-});
+// playButton.addEventListener('click', function() {
+//   // audioTag.volume = 0;
+//   audioTag.play();
+// });
 
 audioTag.onended = function() {
-  // searchFor( shuffle(songs).pop() );
+  searchFor( shuffle(songs).pop() );
 };
 
 function searchFor(trackName) {
-  result.style.display = 'none';
+  // result.style.display = 'none';
   spotifyApi.searchTracks(
     trackName.trim(), {limit: 1})
     .then(function(results) {
@@ -172,10 +171,11 @@ function searchFor(trackName) {
           // ctx.fillRect(0,100,1000*scale,10);
           // ctx.fillStyle = 'white';
 
+          var windowpeaks = [];
           peaks.forEach(function(peak) {
             var rect = document.createElementNS(svgNS, 'rect');
             var percentage = (100 * peak / buffer.length);
-            window.peaks.push(percentage * 10);
+            if (percentage > 5 && percentage < 95) { windowpeaks.push(percentage * 10); }
             rect.setAttributeNS(null, 'x', percentage + '%');
             rect.setAttributeNS(null, 'y', 0);
             rect.setAttributeNS(null, 'width', 1);
@@ -185,7 +185,7 @@ function searchFor(trackName) {
             // ctx.fillRect((percentage*10)*scale,100,scale,10);
           });
 
-          addStars();
+          addStars(windowpeaks);
 
           var rect = document.createElementNS(svgNS, 'rect');
           rect.setAttributeNS(null, 'id', 'scrubber');
@@ -211,7 +211,7 @@ function searchFor(trackName) {
 
           result.style.display = 'block';
 
-          // audioTag.play();
+          audioTag.play();
         });
       };
       request.send();

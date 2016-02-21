@@ -721,25 +721,25 @@ function animate() {
       spawnSprites();
     }
 
-    // increase player speed only when player is jumping
-    if (ticker > (Math.floor(platformWidth / player.speed) * player.speed * 20) && player.dy !== 0) {
-      player.speed = bound(++player.speed, 0, 15);
-      player.walkAnim.frameSpeed = Math.floor(platformWidth / player.speed) - 1;
+    // // increase player speed only when player is jumping
+    // if (ticker > (Math.floor(platformWidth / player.speed) * player.speed * 20) && player.dy !== 0) {
+    //   player.speed = bound(++player.speed, 0, 15);
+    //   player.walkAnim.frameSpeed = Math.floor(platformWidth / player.speed) - 1;
 
-      // reset ticker
-      ticker = 0;
+    //   // reset ticker
+    //   ticker = 0;
 
-      // spawn a platform to fill in gap created by increasing player speed
-      if (gapLength === 0) {
-        var type = getType();
-        ground.push(new Sprite(
-          canvas.width + platformWidth % player.speed,
-          platformBase - platformHeight * platformSpacer,
-          type
-        ));
-        platformLength--;
-      }
-    }
+    //   // spawn a platform to fill in gap created by increasing player speed
+    //   if (gapLength === 0) {
+    //     var type = getType();
+    //     ground.push(new Sprite(
+    //       canvas.width + platformWidth % player.speed,
+    //       platformBase - platformHeight * platformSpacer,
+    //       type
+    //     ));
+    //     platformLength--;
+    //   }
+    // }
 
     ticker++;
 

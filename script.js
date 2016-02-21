@@ -4,6 +4,75 @@
  */
 var spotifyApi = new SpotifyWebApi();
 
+/**
+ * Shuffles array in place.
+ * @param {Array} a items The array containing the items.
+ * @return {Array} a The shuffled array
+ */
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i -= 1) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
+
+var songs = [
+  "Alessia Cara - Here",
+  "Birdy - Keeping Your Head Up",
+  "Coldplay - Hymn For The Weekend (feat. Beyoncé)",
+  "Danny l Harle - Broken Flowers",
+  "Ellie Goulding - Army",
+  "Fetty Wap - Again",
+  "Jack Garratt - Worry",
+  "Jason Derulo - Get Ugly",
+  "Justin Bieber - Love Yourself",
+  "Little Mix - Secret Love Song (feat. Jason Derulo)",
+  "Lukas Graham - 7 Years",
+  "Mumford & Sons - Snake Eyes",
+  "Shawn Mendes - Stitches",
+  "Brandy - I Wanna Be Down ",
+  "MNEK - Wrote A Song About You",
+  "Lxury - Playground",
+  "Linden Jay - Be Like You ",
+  "Fracture - Loving Touch",
+  "Route 94 - Misunderstood",
+  "Avan Lava - Last Night ",
+  "Vic Mensa - Down On My Luck",
+  "Bipolar Sunshine - Deckchairs On The Moon",
+  "Skepta - That's Not Me ",
+  "Jamie xx - Girl",
+  "Shlohmo - Out of Hand",
+  "Grum - Human Touch",
+  "Claude VonStroke - The Clapping Track ",
+  "Little Dragon - Paris ",
+  "Jake Bugg - Messed Up Kids",
+  "Nick Mulvey - Cucurucu",
+  "Drake - Trophies",
+  "Wiley - Born In The Cold ",
+  "Gorgon City - Ready For Your Love ",
+  "Sampha - Too Much ",
+  "BANKS - Waiting Game ",
+  "Scrufizzer - Arctic Monkeys Freestyle",
+  "Osunlade - Dionne",
+  "Sampha - Too Much",
+  "ASAP Ferg - Shabba ",
+  "Shit Robot - We Got A Love ",
+  "Bicep - Satisfy",
+  "Erykah Badu - The Healer",
+  "Busta Rhymes - Thank You ",
+  "ASAP Ferg - Shabba ",
+  "Andy C - Workout",
+  "Joel Compass - Run ",
+  "Disclosure - Apollo",
+  "Jamie Jones - Planets, Spaceships ",
+  "Julio Bashmore - Peppermint ",
+  "Love Is To Die - Warpaint"
+]
+
 var queryInput = document.querySelector('#query'),
     result = document.querySelector('#result'),
     text = document.querySelector('#text'),
@@ -21,37 +90,35 @@ var requestAnimFrame = (function(){
           };
 })();
 
-function updateProgress() {
-
+function updateProgressBar() {
+  var progressIndicator = document.querySelector('#scrubber');
+  if (progressIndicator && audioTag && audioTag.duration) {
+    var percentage = (audioTag.currentTime * 100.0 / audioTag.duration);
+    window.playerX = percentage * 10.0;
+    if (audioTag.currentTime < 1) {
+      audioTag.volume = [0,audioTag.currentTime - 0.2, 1].sort()[1];
+    } else if (audioTag.duration - audioTag.currentTime < 1) {
+      audioTag.volume = [0,audioTag.duration - audioTag.currentTime - 0.2, 1].sort()[1];
+    }
+    progressIndicator.setAttribute('x', percentage + '%');
+  }
 }
+
+setInterval(updateProgressBar, 10);//1000/60);
 
 playButton.addEventListener('click', function() {
   // audioTag.volume = 0;
-  
-
-  var progressIndicator = document.querySelector('#progress');
-  if (progressIndicator && audioTag.duration) {
-    audioTag.play();
-    setInterval(function() {
-      if (audioTag.currentTime < 1) {
-        audioTag.volume = [0,audioTag.currentTime - 0.2, 1].sort()[1];
-      } else if (audioTag.duration - audioTag.currentTime < 1) {
-        audioTag.volume = [0,audioTag.duration - audioTag.currentTime - 0.2, 1].sort()[1];
-      }
-      var percentage = (audioTag.currentTime * 100.0 / audioTag.duration);
-      document.querySelector('#progress').setAttribute('x', percentage + '%');
-    }, 1000/60);
-  }
-
+  audioTag.play();
 });
 
-result.style.display = 'none';
+audioTag.onended = function() {
+  // searchFor( shuffle(songs).pop() );
+};
 
-document.querySelector('form').addEventListener('submit', function(e) {
-  e.preventDefault();
+function searchFor(trackName) {
   result.style.display = 'none';
   spotifyApi.searchTracks(
-    queryInput.value.trim(), {limit: 1})
+    trackName.trim(), {limit: 1})
     .then(function(results) {
       var track = results.tracks.items[0];
       var previewUrl = track.preview_url;
@@ -98,23 +165,37 @@ document.querySelector('form').addEventListener('submit', function(e) {
           var svg = document.querySelector('#svg');
           svg.innerHTML = '';
           var svgNS = 'http://www.w3.org/2000/svg';
+
+          // var c= document.getElementById('test');
+          // var ctx=c.getContext("2d");
+          // var scale = 1.0;
+          // ctx.fillRect(0,100,1000*scale,10);
+          // ctx.fillStyle = 'white';
+
           peaks.forEach(function(peak) {
-            window.peaks.push((100 * peak / buffer.length));
             var rect = document.createElementNS(svgNS, 'rect');
-            rect.setAttributeNS(null, 'x', (100 * peak / buffer.length) + '%');
+            var percentage = (100 * peak / buffer.length);
+            window.peaks.push(percentage * 10);
+            rect.setAttributeNS(null, 'x', percentage + '%');
             rect.setAttributeNS(null, 'y', 0);
             rect.setAttributeNS(null, 'width', 1);
             rect.setAttributeNS(null, 'height', '100%');
             svg.appendChild(rect);
+
+            // ctx.fillRect((percentage*10)*scale,100,scale,10);
           });
 
+          addStars();
+
           var rect = document.createElementNS(svgNS, 'rect');
-          rect.setAttributeNS(null, 'id', 'progress');
+          rect.setAttributeNS(null, 'id', 'scrubber');
           rect.setAttributeNS(null, 'y', 0);
           rect.setAttributeNS(null, 'width', 1);
           rect.setAttributeNS(null, 'height', '100%');
           svg.appendChild(rect);
 
+
+      
           svg.innerHTML = svg.innerHTML;  // force repaint in some browsers
 
           var intervals = countIntervalsBetweenNearbyPeaks(peaks);
@@ -129,10 +210,19 @@ document.querySelector('form').addEventListener('submit', function(e) {
             '<strong>' + track.artists[0].name;
 
           result.style.display = 'block';
+
+          // audioTag.play();
         });
       };
       request.send();
     });
+}
+
+result.style.display = 'none';
+
+document.querySelector('form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  searchFor(queryInput.value);
 });
 
 // Function to identify peaks

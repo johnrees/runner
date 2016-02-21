@@ -3,7 +3,6 @@
   http://tech.beatport.com/2014/web-audio/beat-detection-using-web-audio/
  */
 var spotifyApi = new SpotifyWebApi();
-var echonestApi = new EchonestApi();
 
 var queryInput = document.querySelector('#query'),
     result = document.querySelector('#result'),
@@ -86,7 +85,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
           source.start(0);
 
           var peaks,
-              initialThresold = 0.9,
+              initialThresold = 0.97,
               thresold = initialThresold,
               minThresold = 0.3,
               minPeaks = 30;
@@ -128,34 +127,6 @@ document.querySelector('form').addEventListener('submit', function(e) {
 
           text.innerHTML = track.name + ' by ' +
             '<strong>' + track.artists[0].name;
-
-          var printENBPM = function(tempo) {
-            text.innerHTML += '<div class="small">Other sources: The tempo according to The Echo Nest API is ' +
-                  tempo + ' BPM</div>';
-          };
-          echonestApi.getSongAudioSummaryBySpotifyUri(track.uri)
-            .then(function(result) {
-              if (result.response.status.code === 0 && result.response.songs.length > 0) {
-                var tempo = result.response.songs[0].audio_summary.tempo;
-                printENBPM(tempo);
-              } else {
-                if (result.response.status.code === 5) {
-                  // The track couldn't be found. Fallback to search in EN
-                  echonestApi.searchSongs(track.artists[0].name, track.name)
-                    .then(function(result) {
-                      if (result.response.status.code === 0 && result.response.songs.length > 0) {
-                        echonestApi.getSongAudioSummaryById(result.response.songs[0].id)
-                          .then(function(result) {
-                            if (result.response.status.code === 0 && result.response.songs.length > 0) {
-                              var tempo = result.response.songs[0].audio_summary.tempo;
-                              printENBPM(tempo);
-                            }
-                          });
-                      }
-                    });
-                }
-              }
-            });
 
           result.style.display = 'block';
         });

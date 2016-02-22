@@ -4,6 +4,8 @@ var stars;
 var ground;
 var scaleX = 8;
 var stargroup = [];
+var jumpcount = 0;
+var canJump = true;
 
 function preload() {
   game.load.image('ground', 'assets/platform.png');
@@ -19,9 +21,9 @@ function create() {
   fpsText.fixedToCamera = true;
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
-  game.world.setBounds(0, 0, 1000 * scaleX, game.height);
+  game.world.setBounds(0, -1000, 1000 * scaleX, game.height + 1000);
 
-  player = game.add.sprite(32, game.world.height - 150, 'dude');
+  player = game.add.sprite(32, 100, 'dude');
   window.player = player;
 
   platforms = game.add.group();
@@ -29,14 +31,10 @@ function create() {
 
   // // Here we create the ground.
   // var ground = platforms.create(0, game.world.height - 32, 'ground');
-  ground = game.add.tileSprite(0,game.height-32,game.world.width,32,'ground');
-  
-  game.physics.arcade.enable(player);
-  game.physics.arcade.enable(ground);
+  // ground = game.add.tileSprite(0,game.height-5,game.world.width,32,'ground');
 
-  ground.body.immovable = true;
-  ground.body.allowGravity = false;
-  
+  game.physics.arcade.enable(player);
+  // game.physics.arcade.enable(ground);
   // ground.body.immovable = true;
   //   ground.body.allowGravity = false;
   // ground.scale.setTo(1, 1);
@@ -64,25 +62,61 @@ function create() {
   stars = game.add.group();
   stars.enableBody = true;
 
-  game.camera.follow(player);
-  game.world.bringToTop(ground);
+  game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
 
+  // ground.body.immovable = true;
+  // ground.body.allowGravity = false;
+  // game.world.bringToTop(ground);
+
+  var ledge = platforms.create(0, game.height-30, 'ground');
+  ledge.width = 10;
+  ledge.body.immovable = true;
 }
 
 function addStars(windowpeaks) {
+
+  var prevX = 0;
+  var prevY = game.height-20;
+  var xPos;
+
   for (var i = 0; i < stars.children.length; i++) {
     stars.children[i].destroy();
   }
   for (var i = 0; i < windowpeaks.length; i++)
   {
-    //  Create a star inside of the 'stars' group
-    var star = stars.create(windowpeaks[i] * scaleX + 16, game.height-(Math.random() > 0.5 ? 40 : 80), 'star');
-    star.body.setSize(18, 18, 3, 3);
-    //  Let gravity do its thing
+    // if (Math.random() > 0.5) {
+      xPos = windowpeaks[i] * scaleX - 10;
+      var ledge = platforms.create(prevX, prevY, 'ground');
+      if (i == windowpeaks.length - 1) {
+        ledge.width = game.world.width - prevX;
+      } else {
+        ledge.width = xPos - prevX + 10;
+      }  
+
+      ledge.body.immovable = true;
+      ledge.body.gravity.y = -1; //Math.random() > 0.5 ? -1 : -1.05;
+
+      var max = Math.max(prevY-10, game.height-200);
+      var min = Math.min(prevY+10, game.height-20);
+      var newY = Math.floor(Math.random()*(max-min+1)+min);      
+      prevX = xPos +60 + (newY-prevY);
+      prevY = newY;
+
+    // } else {
+    //   var star = stars.create(xPos + 16, game.height-80, 'star');
+    //   star.body.setSize(18, 18, 3, 3);
+
+    //   var ledge = platforms.create(xPos, game.height-28, 'ground');
+    //   ledge.width = 50;
+    //   ledge.body.immovable = true;
+    // }
+    
     // star.body.gravity.y = 3000;
-    //  This just gives each star a slightly random bounce value
     // star.body.bounce.y = 0.7 + Math.random() * 0.2;
   }
+  // var ledge = platforms.create(0, 100, 'ground');
+  // ledge.body.immovable = true;
+
 }
 
 function collectStar (player, star) {
@@ -106,17 +140,27 @@ function update() {
   if (game.time.fps !== 0) {
     fpsText.setText(game.time.fps + ' FPS');
   }
-  game.physics.arcade.collide(player, ground);
-  game.physics.arcade.collide(stars, ground);
+  game.physics.arcade.collide(player, platforms);
+  // game.physics.arcade.collide(player, ground);
+  game.physics.arcade.collide(stars, platforms);
   game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
-  player.animations.play('right');
   player.body.x = window.playerX * scaleX;
 
   for (var i = 0; i < stars.children.length; i++) {
     if (stars.children[i].body.x < game.camera.x) {
       stars.children[i].destroy();
       console.log("REMOVE")
+    }
+    // else {
+    //   break;
+    // }
+  }
+
+  for (var i = 0; i < platforms.children.length; i++) {
+    if (platforms.children[i].body.x + platforms.children[i].body.width < game.camera.x) {
+      platforms.children[i].destroy();
+      console.log("REMOVE PLAT")
     }
     // else {
     //   break;
@@ -146,16 +190,37 @@ function update() {
   // }
 
   //  Allow the player to jump if they are touching the ground.
-  
 
-  //  Allow the player to jump if they are touching the ground.
   if (cursors.down.isDown && player.body.touching.down)
   {
-      player.body.setSize(20, 24, 3, 24);
-  } else if (cursors.up.isDown && player.body.touching.down)
-  {
-      player.body.velocity.y = -600;
+    player.animations.play('left');
+    player.body.setSize(20, 24, 3, 24);
   } else {
-      player.body.setSize(10, 48, 8, 0);
+    player.animations.play('right');
+    player.body.setSize(28, 48, 1, 0);
   }
+  
+  if (canJump && player.body.touching.down && cursors.up.isDown) {
+    canJump = false;
+    player.body.velocity.y = -585;
+  } else if (cursors.up.isUp)
+  {
+    canJump = true;
+  }
+
+  
+  // if (cursors.up.isUp && player.body.touching.down) {
+  //   jumpcount = 0;
+  // }
+  // if (jumpcount == 0 && cursors.up.isDown && player.body.touching.down) {
+  //   jumpcount = 1;
+  //   player.body.velocity.y = -600;
+  // }
+  // else if (jumpcount == 1 && cursors.up.isUp && !player.body.touching.down) {
+  //   jumpcount = 2;
+  // }
+  // else if (jumpcount == 2 && cursors.up.isDown && !player.body.touching.down) {
+  //   player.body.velocity.y = -250;
+  // }
+
 }

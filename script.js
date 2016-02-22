@@ -21,56 +21,8 @@ function shuffle(a) {
 }
 
 var songs = [
-  "Alessia Cara - Here",
-  "Birdy - Keeping Your Head Up",
-  "Coldplay - Hymn For The Weekend (feat. Beyoncé)",
-  "Danny l Harle - Broken Flowers",
-  "Ellie Goulding - Army",
-  "Fetty Wap - Again",
-  "Jack Garratt - Worry",
-  "Jason Derulo - Get Ugly",
-  "Justin Bieber - Love Yourself",
-  "Little Mix - Secret Love Song (feat. Jason Derulo)",
-  "Lukas Graham - 7 Years",
-  "Mumford & Sons - Snake Eyes",
-  "Shawn Mendes - Stitches",
-  "Brandy - I Wanna Be Down ",
-  "MNEK - Wrote A Song About You",
-  "Lxury - Playground",
-  "Linden Jay - Be Like You ",
-  "Fracture - Loving Touch",
-  "Route 94 - Misunderstood",
-  "Avan Lava - Last Night ",
-  "Vic Mensa - Down On My Luck",
-  "Bipolar Sunshine - Deckchairs On The Moon",
-  "Skepta - That's Not Me ",
-  "Jamie xx - Girl",
-  "Shlohmo - Out of Hand",
-  "Grum - Human Touch",
-  "Claude VonStroke - The Clapping Track ",
-  "Little Dragon - Paris ",
-  "Jake Bugg - Messed Up Kids",
-  "Nick Mulvey - Cucurucu",
-  "Drake - Trophies",
-  "Wiley - Born In The Cold ",
-  "Gorgon City - Ready For Your Love ",
-  "Sampha - Too Much ",
-  "BANKS - Waiting Game ",
-  "Scrufizzer - Arctic Monkeys Freestyle",
-  "Osunlade - Dionne",
-  "Sampha - Too Much",
-  "ASAP Ferg - Shabba ",
-  "Shit Robot - We Got A Love ",
-  "Bicep - Satisfy",
-  "Erykah Badu - The Healer",
-  "Busta Rhymes - Thank You ",
-  "ASAP Ferg - Shabba ",
-  "Andy C - Workout",
-  "Joel Compass - Run ",
-  "Disclosure - Apollo",
-  "Jamie Jones - Planets, Spaceships ",
-  "Julio Bashmore - Peppermint ",
-  "Love Is To Die - Warpaint"
+  "dmx",
+  "get low lil jon"
 ]
 
 var queryInput = document.querySelector('#query'),
@@ -151,10 +103,10 @@ function searchFor(trackName) {
           source.start(0);
 
           var peaks,
-              initialThresold = 0.97,
+              initialThresold = 0.98,
               thresold = initialThresold,
-              minThresold = 0.3,
-              minPeaks = 30;
+              minThresold = 0.6,
+              minPeaks = 28;
 
           do {
             peaks = getPeaksAtThreshold(buffer.getChannelData(0), thresold);
@@ -234,7 +186,7 @@ function getPeaksAtThreshold(data, threshold) {
       peaksArray.push(i);
       // Skip forward ~ 1/4s to get past this peak.
       // i += 10000;
-      i += 12000;
+      i += 13000;
     }
     i++;
   }

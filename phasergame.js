@@ -68,7 +68,7 @@ function create() {
   // ground.body.allowGravity = false;
   // game.world.bringToTop(ground);
 
-  var ledge = platforms.create(0, game.height-30, 'ground');
+  var ledge = platforms.create(0, game.height-32, 'ground');
   ledge.width = 10;
   ledge.body.immovable = true;
 }
@@ -76,11 +76,14 @@ function create() {
 function addStars(windowpeaks) {
 
   var prevX = 0;
-  var prevY = game.height-20;
+  var prevY = game.height-32;
   var xPos;
 
   for (var i = 0; i < stars.children.length; i++) {
     stars.children[i].destroy();
+  }
+  for (var i = 0; i < platforms.children.length; i++) {
+    platforms.children[i].destroy();
   }
   for (var i = 0; i < windowpeaks.length; i++)
   {
@@ -94,12 +97,19 @@ function addStars(windowpeaks) {
       }  
 
       ledge.body.immovable = true;
-      ledge.body.gravity.y = -1; //Math.random() > 0.5 ? -1 : -1.05;
+      // ledge.body.gravity.y = -1; //Math.random() > 0.5 ? -1 : -1.05;
 
-      var max = Math.max(prevY-10, game.height-200);
-      var min = Math.min(prevY+10, game.height-20);
+      // var max = Math.max(prevY-10, game.height-200);
+      // var min = Math.min(prevY+10, game.height-20);
+      // var newY = Math.floor(Math.random()*(max-min+1)+min);      
+      // prevX = xPos +60 + (newY-prevY);
+      // prevY = newY;
+
+
+      var max = Math.max(Math.random() > 0.5 ? prevY-22 : prevY, game.height-192)
+      var min = Math.min(Math.random() > 0.5 ? prevY+22 : prevY, game.height-32)
       var newY = Math.floor(Math.random()*(max-min+1)+min);      
-      prevX = xPos +60 + (newY-prevY);
+      prevX = xPos +60 + (newY-prevY)/2;
       prevY = newY;
 
     // } else {
@@ -114,6 +124,8 @@ function addStars(windowpeaks) {
     // star.body.gravity.y = 3000;
     // star.body.bounce.y = 0.7 + Math.random() * 0.2;
   }
+
+  player.body.velocity.y = -600;
   // var ledge = platforms.create(0, 100, 'ground');
   // ledge.body.immovable = true;
 

@@ -21,8 +21,17 @@ function shuffle(a) {
 }
 
 var songs = [
-  "dmx",
-  "get low lil jon"
+  "mos def",
+  "rakim eric",
+  "dj shadow",
+  // "a tribe called quest",
+  "the roots",
+  "bombs over baghdad",
+  "ghostpoet",
+  "ghostface killah",
+  "the rza",
+  "ugly duckling",
+  "dj format abdominal"
 ]
 
 var queryInput = document.querySelector('#query'),

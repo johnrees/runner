@@ -68,9 +68,9 @@ function create() {
   // ground.body.allowGravity = false;
   // game.world.bringToTop(ground);
 
-  var ledge = platforms.create(0, game.height-32, 'ground');
-  ledge.width = 10;
-  ledge.body.immovable = true;
+  // var ledge = platforms.create(0, game.height-32, 'ground');
+  // ledge.width = 10;
+  // ledge.body.immovable = true;
 }
 
 function addStars(windowpeaks) {
@@ -207,7 +207,9 @@ function update() {
   {
     player.animations.play('left');
     player.body.setSize(20, 24, 3, 24);
-  } else {
+  } else if (!player.body.touching.down) {
+    player.animations.stop();
+  }else {
     player.animations.play('right');
     player.body.setSize(28, 48, 1, 0);
   }
@@ -219,20 +221,5 @@ function update() {
   {
     canJump = true;
   }
-
-  
-  // if (cursors.up.isUp && player.body.touching.down) {
-  //   jumpcount = 0;
-  // }
-  // if (jumpcount == 0 && cursors.up.isDown && player.body.touching.down) {
-  //   jumpcount = 1;
-  //   player.body.velocity.y = -600;
-  // }
-  // else if (jumpcount == 1 && cursors.up.isUp && !player.body.touching.down) {
-  //   jumpcount = 2;
-  // }
-  // else if (jumpcount == 2 && cursors.up.isDown && !player.body.touching.down) {
-  //   player.body.velocity.y = -250;
-  // }
 
 }

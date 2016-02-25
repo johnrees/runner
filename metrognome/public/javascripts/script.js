@@ -23,15 +23,16 @@ function shuffle(a) {
 var songs = [
   "mos def",
   "rakim eric",
-  "dj shadow",
+  "dj shadow organ",
+  "apache sugar hill gang"
   // "a tribe called quest",
-  "the roots",
-  "bombs over baghdad",
-  "ghostpoet",
-  "ghostface killah",
-  "the rza",
-  "ugly duckling",
-  "dj format abdominal"
+  // "the roots",
+  // "bombs over baghdad",
+  // "ghostpoet",
+  // "ghostface killah",
+  // "the rza",
+  // "ugly duckling",
+  // "dj format abdominal"
 ]
 
 var queryInput = document.querySelector('#query'),
@@ -51,10 +52,9 @@ var requestAnimFrame = (function(){
 })();
 
 function updateProgressBar() {
-  var progressIndicator = document.querySelector('#scrubber');
+  var progressIndicator = document.getElementById('scrubber');
   if (progressIndicator && audioTag && audioTag.duration) {
     var percentage = (audioTag.currentTime * 100.0 / audioTag.duration);
-    window.playerX = percentage * 10.0;
     if (audioTag.currentTime < 1) {
       audioTag.volume = [0,audioTag.currentTime - 0.2, 1].sort()[1];
     } else if (audioTag.duration - audioTag.currentTime < 1) {
@@ -64,7 +64,7 @@ function updateProgressBar() {
   }
 }
 
-setInterval(updateProgressBar, 10);//1000/60);
+setInterval(updateProgressBar, 50);
 
 // playButton.addEventListener('click', function() {
 //   // audioTag.volume = 0;
@@ -114,8 +114,8 @@ function searchFor(trackName) {
           var peaks,
               initialThresold = 0.98,
               thresold = initialThresold,
-              minThresold = 0.6,
-              minPeaks = 28;
+              minThresold = 0.4,
+              minPeaks = 35;
 
           do {
             peaks = getPeaksAtThreshold(buffer.getChannelData(0), thresold);
@@ -154,8 +154,6 @@ function searchFor(trackName) {
           rect.setAttributeNS(null, 'width', 1);
           rect.setAttributeNS(null, 'height', '100%');
           svg.appendChild(rect);
-
-
       
           svg.innerHTML = svg.innerHTML;  // force repaint in some browsers
 
@@ -173,6 +171,7 @@ function searchFor(trackName) {
           result.style.display = 'block';
 
           audioTag.play();
+          updateProgressBar();
         });
       };
       request.send();

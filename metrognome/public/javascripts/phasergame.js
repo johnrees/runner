@@ -14,6 +14,7 @@ function preload() {
 }
 
 function create() {
+  game.renderer.renderSession.roundPixels = false;
   game.time.advancedTiming = true;
   fpsText = game.add.text(
     20, 20, '', { font: '16px Arial', fill: '#ffffff' }
@@ -49,8 +50,8 @@ function create() {
   // // ledge.body.immovable = true;
 
   //  Player physics properties. Give the little guy a slight bounce.
-  player.body.bounce.y = 0.2;
-  player.body.gravity.y = 3800;
+  player.body.bounce.y = 0;
+  player.body.gravity.y = 4800;
   player.body.collideWorldBounds = true;
 
   //  Our two animations, walking left and right.
@@ -88,12 +89,13 @@ function addStars(windowpeaks) {
   for (var i = 0; i < windowpeaks.length; i++)
   {
     // if (Math.random() > 0.5) {
-      xPos = windowpeaks[i] * scaleX - 10;
+      xPos = windowpeaks[i] * scaleX - 20;
       var ledge = platforms.create(prevX, prevY, 'ground');
       if (i == windowpeaks.length - 1) {
         ledge.width = game.world.width - prevX;
       } else {
-        ledge.width = xPos - prevX + 10;
+        ledge.width = xPos - prevX + 30;
+        //  + 10
       }  
 
       ledge.body.immovable = true;
@@ -109,7 +111,7 @@ function addStars(windowpeaks) {
       var max = Math.max(Math.random() > 0.5 ? prevY-22 : prevY, game.height-192)
       var min = Math.min(Math.random() > 0.5 ? prevY+22 : prevY, game.height-32)
       var newY = Math.floor(Math.random()*(max-min+1)+min);      
-      prevX = xPos +60 + (newY-prevY)/2;
+      prevX = xPos +60 + (newY-prevY)/4;
       prevY = newY;
 
     // } else {
@@ -157,7 +159,10 @@ function update() {
   game.physics.arcade.collide(stars, platforms);
   game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
-  player.body.x = window.playerX * scaleX;
+// window.playerX
+  var per = (document.getElementById('audio').currentTime / document.getElementById('audio').duration) * 1000;
+  per = isNaN(per) ? 0 : per;
+  player.body.x = per * scaleX;
 
   for (var i = 0; i < stars.children.length; i++) {
     if (stars.children[i].body.x < game.camera.x) {
@@ -216,9 +221,14 @@ function update() {
   
   if (canJump && player.body.touching.down && cursors.up.isDown) {
     canJump = false;
-    player.body.velocity.y = -585;
+    player.body.velocity.y = -575;
   } else if (cursors.up.isUp)
   {
+    // if (player.body.touching.down) {
+    //   jumpcount = 0;
+    // } else {
+    //   jumpcount++;
+    // }
     canJump = true;
   }
 

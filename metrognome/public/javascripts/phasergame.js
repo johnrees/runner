@@ -1,4 +1,4 @@
-var game = new Phaser.Game(1000, 300, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(1000, 300, Phaser.AUTO, 'game-container', { preload: preload, create: create, update: update, render: render });
 var cursors;
 var stars;
 var ground;
@@ -74,6 +74,8 @@ function create() {
   // ledge.body.immovable = true;
 }
 
+var mustAddPlatform = true;
+
 function addStars(windowpeaks) {
 
   var prevX = 0;
@@ -88,17 +90,22 @@ function addStars(windowpeaks) {
   }
   for (var i = 0; i < windowpeaks.length; i++)
   {
-    // if (Math.random() > 0.5) {
-      xPos = windowpeaks[i] * scaleX - 20;
-      var ledge = platforms.create(prevX, prevY, 'ground');
-      if (i == windowpeaks.length - 1) {
-        ledge.width = game.world.width - prevX;
-      } else {
-        ledge.width = xPos - prevX + 30;
-        //  + 10
-      }  
+    var width;
+    xPos = windowpeaks[i] * scaleX - 20;
+    if (i == windowpeaks.length - 1) {
+      width = game.world.width - prevX;
+    } else {
+      width = xPos - prevX + 30;
+    }
 
+    if (mustAddPlatform || width > 50) {
+      mustAddPlatform = false;
+      var ledge = platforms.create(prevX, prevY, 'ground');
+      ledge.width = width;
       ledge.body.immovable = true;
+    } else {
+      mustAddPlatform = true;
+    }
       // ledge.body.gravity.y = -1; //Math.random() > 0.5 ? -1 : -1.05;
 
       // var max = Math.max(prevY-10, game.height-200);
@@ -219,17 +226,33 @@ function update() {
     player.body.setSize(28, 48, 1, 0);
   }
   
-  if (canJump && player.body.touching.down && cursors.up.isDown) {
-    canJump = false;
-    player.body.velocity.y = -575;
-  } else if (cursors.up.isUp)
-  {
-    // if (player.body.touching.down) {
-    //   jumpcount = 0;
-    // } else {
-    //   jumpcount++;
-    // }
-    canJump = true;
+  if (player.body.touching.down) {
+    if (jumpcount == 0 && cursors.up.isDown) {
+      player.body.velocity.y = -575;
+      jumpcount = 1;
+    } else if (cursors.up.isUp) {
+      jumpcount = 0;
+    }
+  } else {
+    if (jumpcount == 1 && cursors.up.isUp) {
+      jumpcount = 2;
+    } else if (jumpcount == 2 && cursors.up.isDown) {
+      player.body.velocity.y = -750;
+      jumpcount = 3;
+    }
   }
+    
+  // }
+  // if (!player.body.touching.down && cursors.up.isDown && jumpcount == 1) {
+  //   player.body.velocity.y = -575;
+  //   jumpcount = 2;
+  // }
+  // else if (cursors.up.isUp) {
+  //   if (player.body.touching.down) {
+      
+  //   } else {
+  //     jumpcount++;
+  //   }
+  // }
 
 }

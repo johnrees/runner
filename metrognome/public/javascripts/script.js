@@ -136,7 +136,7 @@ function searchFor(trackName) {
           peaks.forEach(function(peak) {
             var rect = document.createElementNS(svgNS, 'rect');
             var percentage = (100 * peak / buffer.length);
-            if (percentage > 5 && percentage < 95) { windowpeaks.push(percentage * 10); }
+            if (percentage > 3 && percentage < 97) { windowpeaks.push(percentage * 10); }
             rect.setAttributeNS(null, 'x', percentage + '%');
             rect.setAttributeNS(null, 'y', 0);
             rect.setAttributeNS(null, 'width', 1);
@@ -178,7 +178,7 @@ function searchFor(trackName) {
     });
 }
 
-result.style.display = 'none';
+// result.style.display = 'none';
 
 document.querySelector('form').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -194,7 +194,7 @@ function getPeaksAtThreshold(data, threshold) {
       peaksArray.push(i);
       // Skip forward ~ 1/4s to get past this peak.
       // i += 10000;
-      i += 13000;
+      i += 12000;
     }
     i++;
   }
